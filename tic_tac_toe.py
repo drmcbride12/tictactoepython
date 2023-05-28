@@ -1,21 +1,20 @@
-# Tic Tac Toe Game Board
 board = [['-', '-', '-'],
          ['-', '-', '-'],
          ['-', '-', '-']]
 
-
+# Prints the current state of the board
 def print_board():
     for row in board:
         print(row)
 
-
+# Places the player's move on the board
 def player_move(row, col, player):
-    if board[row][col] == '-':
-        board[row][col] = player
+    if board[row-1][col-1] == '-':
+        board[row-1][col-1] = player
     else:
         print('That space is already taken. Please choose another space.')
 
-
+# Checks if the player has won
 def check_win(player):
     # Check rows
     for row in board:
@@ -32,31 +31,38 @@ def check_win(player):
         return True
     return False
 
-
+# AI makes a random move
 def ai_move():
     import random
-    row = random.randint(0, 2)
-    col = random.randint(0, 2)
-    while board[row][col] != '-':
-        row = random.randint(0, 2)
-        col = random.randint(0, 2)
-    board[row][col] = 'O'
+    row = random.randint(1, 3)
+    col = random.randint(1, 3)
+    while board[row-1][col-1] != '-':
+        row = random.randint(1, 3)
+        col = random.randint(1, 3)
+    board[row-1][col-1] = 'O'
 
-
+# Checks if the game has ended in a tie
 def check_tie():
     for row in board:
         if '-' in row:
             return False
     return True
 
-
+# Runs the game
 def main():
     print('Welcome to Tic Tac Toe!')
     print_board()
     while True:
         # Player's move
-        row = int(input('Enter row (0-2): '))
-        col = int(input('Enter column (0-2): '))
+        try:
+            row = int(input('Enter row (1-3): '))
+            col = int(input('Enter column (1-3): '))
+        except ValueError:
+            print('Invalid input. Please enter a number between 1 and 3.')
+            continue
+        if row < 1 or row > 3 or col < 1 or col > 3:
+            print('Invalid input. Please enter a number between 1 and 3.')
+            continue
         player_move(row, col, 'X')
         print_board()
         if check_win('X'):
@@ -76,6 +82,5 @@ def main():
             print('The game ended in a tie.')
             break
 
-
-# Run the game
-main()
+if __name__ == '__main__':
+    main()
