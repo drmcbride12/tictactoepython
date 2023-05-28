@@ -50,11 +50,32 @@ def check_tie():
     return True
 
 
-# Test the functions
-print_board()
-player_move(0, 0, 'X')
-ai_move()
-print_board()
-print(check_win('X'))
-print(check_win('O'))
-print(check_tie())
+def main():
+    print('Welcome to Tic Tac Toe!')
+    print_board()
+    while True:
+        # Player's move
+        row = int(input('Enter row (0-2): '))
+        col = int(input('Enter column (0-2): '))
+        player_move(row, col, 'X')
+        print_board()
+        if check_win('X'):
+            print('Congratulations! You won!')
+            break
+        if check_tie():
+            print('The game ended in a tie.')
+            break
+        # AI's move
+        print('AI is making a move...')
+        ai_move()
+        print_board()
+        if check_win('O'):
+            print('Sorry, you lost. Better luck next time!')
+            break
+        if check_tie():
+            print('The game ended in a tie.')
+            break
+
+
+# Run the game
+main()
