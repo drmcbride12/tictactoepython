@@ -1,17 +1,31 @@
 import random
 
-board = [['-', '-', '-'],
-         ['-', '-', '-'],
-         ['-', '-', '-']]
+# ANSI escape codes for colored text
+RED = '\033[91m'
+BLUE = '\033[94m'
+END = '\033[0m'
 
-# Prints the current state of the board
+board = [[' ', ' ', ' '],
+         [' ', ' ', ' '],
+         [' ', ' ', ' ']]
+
+# Prints the current state of the board with colors
 def print_board():
+    print("---------")
     for row in board:
-        print(row)
+        print("|", end=" ")
+        for cell in row:
+            if cell == 'X':
+                print(RED + cell + END, end=" | ")
+            elif cell == 'O':
+                print(BLUE + cell + END, end=" | ")
+            else:
+                print(cell, end=" | ")
+        print("\n---------")
 
 # Places the player's move on the board
 def player_move(row, col, player):
-    if board[row-1][col-1] == '-':
+    if board[row-1][col-1] == ' ':
         board[row-1][col-1] = player
     else:
         print('That space is already taken. Please choose another space.')
@@ -38,7 +52,7 @@ def easy_ai_move():
     while True:
         row = random.randint(0, 2)
         col = random.randint(0, 2)
-        if board[row][col] == '-':
+        if board[row][col] == ' ':
             board[row][col] = 'O'
             return
 
@@ -47,7 +61,7 @@ def hard_ai_move():
     available_moves = []
     for row in range(3):
         for col in range(3):
-            if board[row][col] == '-':
+            if board[row][col] == ' ':
                 available_moves.append((row, col))
 
     # Check for winning move
@@ -57,7 +71,7 @@ def hard_ai_move():
         if check_win('O'):
             return
         else:
-            board[row][col] = '-'
+            board[row][col] = ' '
 
     # Check for blocking move
     for move in available_moves:
@@ -67,7 +81,7 @@ def hard_ai_move():
             board[row][col] = 'O'
             return
         else:
-            board[row][col] = '-'
+            board[row][col] = ' '
 
     # Choose a random move
     random_move = random.choice(available_moves)
@@ -78,7 +92,7 @@ def hard_ai_move():
 # Checks if the game has ended in a tie
 def check_tie():
     for row in board:
-        if '-' in row:
+        if ' ' in row:
             return False
     return True
 
