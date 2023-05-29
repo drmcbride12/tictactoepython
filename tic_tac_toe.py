@@ -5,13 +5,9 @@ RED = '\033[91m'
 BLUE = '\033[94m'
 END = '\033[0m'
 
-board = [[' ', ' ', ' '],
-         [' ', ' ', ' '],
-         [' ', ' ', ' ']]
-
 # Prints the current state of the board with colors
-def print_board():
-    print("---------")
+def print_board(board):
+    print("-------------")
     for row in board:
         print("|", end=" ")
         for cell in row:
@@ -21,34 +17,17 @@ def print_board():
                 print(BLUE + cell + END, end=" | ")
             else:
                 print(cell, end=" | ")
-        print("\n---------")
+        print("\n-------------")
 
 # Places the player's move on the board
-def player_move(row, col, player):
-    if board[row-1][col-1] == ' ':
-        board[row-1][col-1] = player
+def player_move(board, row, col, player):
+    if board[row][col] == ' ':
+        board[row][col] = player
     else:
         print('That space is already taken. Please choose another space.')
 
-# Checks if the player has won
-def check_win(player):
-    # Check rows
-    for row in board:
-        if row == [player, player, player]:
-            return True
-    # Check columns
-    for i in range(3):
-        if board[0][i] == player and board[1][i] == player and board[2][i] == player:
-            return True
-    # Check diagonals
-    if board[0][0] == player and board[1][1] == player and board[2][2] == player:
-        return True
-    if board[0][2] == player and board[1][1] == player and board[2][0] == player:
-        return True
-    return False
-
 # AI makes a move in easy mode
-def easy_ai_move():
+def easy_ai_move(board):
     while True:
         row = random.randint(0, 2)
         col = random.randint(0, 2)
@@ -56,8 +35,32 @@ def easy_ai_move():
             board[row][col] = 'O'
             return
 
-# AI makes an improved move in hard mode
-def hard_ai_move():
+# AI makes a move in medium mode
+def medium_ai_move(board):
+    # Check if AI can win in the next move
+    for row in range(3):
+        for col in range(3):
+            if board[row][col] == ' ':
+                board[row][col] = 'O'
+                if check_win(board, 'O'):
+                    return
+                board[row][col] = ' '
+
+    # Check if player can win in the next move and block them
+    for row in range(3):
+        for col in range(3):
+            if board[row][col] == ' ':
+                board[row][col] = 'X'
+                if check_win(board, 'X'):
+                    board[row][col] = 'O'
+                    return
+                board[row][col] = ' '
+
+    # Choose a random move
+    easy_ai_move(board)
+
+# AI makes a move in hard mode
+def hard_ai_move(board):
     available_moves = []
     for row in range(3):
         for col in range(3):
@@ -68,7 +71,7 @@ def hard_ai_move():
     for move in available_moves:
         row, col = move
         board[row][col] = 'O'
-        if check_win('O'):
+        if check_win(board, 'O'):
             return
         else:
             board[row][col] = ' '
@@ -77,7 +80,7 @@ def hard_ai_move():
     for move in available_moves:
         row, col = move
         board[row][col] = 'X'
-        if check_win('X'):
+        if check_win(board, 'X'):
             board[row][col] = 'O'
             return
         else:
@@ -88,8 +91,8 @@ def hard_ai_move():
     row, col = random_move
     board[row][col] = 'O'
 
-# AI makes a move using the minimax algorithm in impossible mode
-def impossible_ai_move():
+# AI makes a move in expert mode (minimax algorithm)
+def expert_ai_move(board):
     best_score = float('-inf')
     best_move = None
 
@@ -107,14 +110,15 @@ def impossible_ai_move():
     row, col = best_move
     board[row][col] = 'O'
 
-# Minimax algorithm for the impossible AI
 def minimax(board, depth, is_maximizing):
-    if check_win('O'):
-        return 1
-    if check_win('X'):
-        return -1
-    if check_tie():
-        return 0
+    scores = {'X': -1, 'O': 1, 'tie': 0}
+
+    if check_win(board, 'X'):
+        return scores['X']
+    if check_win(board, 'O'):
+        return scores['O']
+    if check_tie(board):
+        return scores['tie']
 
     if is_maximizing:
         best_score = float('-inf')
@@ -137,138 +141,106 @@ def minimax(board, depth, is_maximizing):
                     best_score = min(score, best_score)
         return best_score
 
+# Checks if the player has won
+def check_win(board, player):
+    # Check rows
+    for row in board:
+        if row == [player, player, player]:
+            return True
+    # Check columns
+    for i in range(3):
+        if board[0][i] == player and board[1][i] == player and board[2][i] == player:
+            return True
+    # Check diagonals
+    if board[0][0] == player and board[1][1] == player and board[2][2] == player:
+        return True
+    if board[0][2] == player and board[1][1] == player and board[2][0] == player:
+        return True
+    return False
+
 # Checks if the game has ended in a tie
-def check_tie():
+def check_tie(board):
     for row in board:
         if ' ' in row:
             return False
     return True
 
-# Runs the game in easy mode
-def play_easy_mode():
-    print('Playing in easy mode.')
-    print('Welcome to Tic Tac Toe!')
-    print_board()
-    while True:
-        # Player's move
-        try:
-            row = int(input('Enter row (1-3): '))
-            col = int(input('Enter column (1-3): '))
-        except ValueError:
-            print('Invalid input. Please enter a number between 1 and 3.')
-            continue
-        if row < 1 or row > 3 or col < 1 or col > 3:
-            print('Invalid input. Please enter a number between 1 and 3.')
-            continue
-        player_move(row, col, 'X')
-        print_board()
-        if check_win('X'):
-            print('Congratulations! You won!')
-            break
-        if check_tie():
-            print('The game ended in a tie.')
-            break
-        # AI's move
-        print('AI is making a move...')
-        easy_ai_move()
-        print_board()
-        if check_win('O'):
-            print('Sorry, you lost. Better luck next time!')
-            break
-        if check_tie():
-            print('The game ended in a tie.')
-            break
+# Main function to play the game
+def play_game():
+    difficulty_levels = ['Easy', 'Medium', 'Hard', 'Expert', 'Impossible']
+    player = 'X'
 
-# Runs the game in hard mode
-def play_hard_mode():
-    print('Playing in hard mode.')
     print('Welcome to Tic Tac Toe!')
-    print_board()
-    while True:
-        # Player's move
-        try:
-            row = int(input('Enter row (1-3): '))
-            col = int(input('Enter column (1-3): '))
-        except ValueError:
-            print('Invalid input. Please enter a number between 1 and 3.')
-            continue
-        if row < 1 or row > 3 or col < 1 or col > 3:
-            print('Invalid input. Please enter a number between 1 and 3.')
-            continue
-        player_move(row, col, 'X')
-        print_board()
-        if check_win('X'):
-            print('Congratulations! You won!')
-            break
-        if check_tie():
-            print('The game ended in a tie.')
-            break
-        # AI's move
-        print('AI is making a move...')
-        hard_ai_move()
-        print_board()
-        if check_win('O'):
-            print('Sorry, you lost. Better luck next time!')
-            break
-        if check_tie():
-            print('The game ended in a tie.')
-            break
+    print('You will play against the AI in increasing difficulty levels.')
+    print('Your moves will be displayed in', RED + 'red', END, 'and the AI moves will be displayed in', BLUE + 'blue', END)
+    input('Press Enter to start the game...')
 
-# Runs the game in impossible mode
-def play_impossible_mode():
-    print('Playing in impossible mode.')
-    print('Welcome to Tic Tac Toe!')
-    print_board()
-    while True:
-        # Player's move
-        try:
-            row = int(input('Enter row (1-3): '))
-            col = int(input('Enter column (1-3): '))
-        except ValueError:
-            print('Invalid input. Please enter a number between 1 and 3.')
-            continue
-        if row < 1 or row > 3 or col < 1 or col > 3:
-            print('Invalid input. Please enter a number between 1 and 3.')
-            continue
-        player_move(row, col, 'X')
-        print_board()
-        if check_win('X'):
-            print('Congratulations! You won!')
-            break
-        if check_tie():
-            print('The game ended in a tie.')
-            break
-        # AI's move
-        print('AI is making a move...')
-        impossible_ai_move()
-        print_board()
-        if check_win('O'):
-            print('Sorry, you lost. Better luck next time!')
-            break
-        if check_tie():
-            print('The game ended in a tie.')
-            break
+    for current_level in range(len(difficulty_levels)):
+        print('\n' + '=' * 20)
+        print('Current Level:', difficulty_levels[current_level])
+        print('=' * 20 + '\n')
 
-# Main function to choose game mode and start the game
-def main():
-    print('Welcome to Tic Tac Toe!')
-    while True:
-        try:
-            mode = int(input('Choose a game mode:\n1. Easy\n2. Hard\n3. Impossible\nEnter the mode number (1-3): '))
-        except ValueError:
-            print('Invalid input. Please enter a number.')
-            continue
-        if mode == 1:
-            play_easy_mode()
-            break
-        elif mode == 2:
-            play_hard_mode()
-            break
-        elif mode == 3:
-            play_impossible_mode()
-            break
-        else:
-            print('Invalid input. Please enter 1 for Easy mode, 2 for Hard mode, or 3 for Impossible mode.')
+        board = [[' ', ' ', ' '], [' ', ' ', ' '], [' ', ' ', ' ']]  # Initialize the board
 
-if __name__ == '__main__':
-    main()
+        while True:
+            print_board(board)
+
+            if player == 'X':
+                while True:
+                    try:
+                        row = int(input("Enter the row (1-3): ")) - 1
+                        col = int(input("Enter the column (1-3): ")) - 1
+                        if row in range(3) and col in range(3):
+                            break
+                        else:
+                            print('Invalid input. Please enter numbers between 1 and 3.')
+                    except ValueError:
+                        print('Invalid input. Please enter numbers between 1 and 3.')
+
+                player_move(board, row, col, player)
+
+                if check_win(board, player):
+                    print_board(board)
+                    print('Congratulations! You won!')
+                    break
+
+                if check_tie(board):
+                    print_board(board)
+                    print('The game ended in a tie.')
+                    break
+
+                player = 'O'
+
+            else:
+                if difficulty_levels[current_level] == 'Easy':
+                    easy_ai_move(board)
+                elif difficulty_levels[current_level] == 'Medium':
+                    medium_ai_move(board)
+                elif difficulty_levels[current_level] == 'Hard':
+                    hard_ai_move(board)
+                else:
+                    expert_ai_move(board)
+
+                if check_win(board, 'O'):
+                    print_board(board)
+                    print('You lost! The AI won.')
+                    break
+
+                if check_tie(board):
+                    print_board(board)
+                    print('The game ended in a tie.')
+                    break
+
+                player = 'X'
+
+        print('\n' + '=' * 20)
+        print('Level completed:', difficulty_levels[current_level])
+        print('=' * 20 + '\n')
+
+        if current_level < len(difficulty_levels) - 1:
+            input('Press Enter to proceed to the next level...')
+
+    print('Congratulations! You have completed all levels.')
+
+# Start the game
+play_game()
