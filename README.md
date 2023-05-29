@@ -1,10 +1,10 @@
-Tic tac toe in python
+Tic Tac Toe in Python
 
 ## Features
 
-- Colorful display: The game board is beautifully presented using different colors for player moves. Your moves are highlighted in red, while the AI's moves are displayed in blue. It adds a vibrant touch to the traditional Tic Tac Toe experience!
+- Colorful Display: The game board is beautifully presented using different colors for player moves. Your moves are highlighted in red, while the AI's moves are displayed in blue. It adds a vibrant touch to the traditional Tic Tac Toe experience!
 
-- 1-5 level system: The ai starts off as easy and goes to impossible. if you lose any levels then the ai gets an advantage by being able to move first.
+- Easy to Expert Level System: The ai starts off as easy and goes to impossible. if you lose any levels then the ai gets an advantage by being able to move first.
 
 
 ## How to Play
@@ -16,9 +16,8 @@ Tic tac toe in python
    ```
    python tic_tac_toe.py
    ```
-5. Choose your preferred game mode: Easy or Hard.
-6. Enter the row and column numbers when prompted to make your moves.
-7. Enjoy the game and try to outwit the AI!
+5. Enter the row and column numbers when prompted to make your moves.
+6. Enjoy the game and try to outwit the AI!
 
 ## Requirements
 
