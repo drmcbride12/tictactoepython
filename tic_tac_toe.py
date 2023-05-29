@@ -88,6 +88,54 @@ def hard_ai_move():
     row, col = random_move
     board[row][col] = 'O'
 
+# AI makes a move using the minimax algorithm in impossible mode
+def impossible_ai_move():
+    best_score = float('-inf')
+    best_move = None
+
+    for row in range(3):
+        for col in range(3):
+            if board[row][col] == ' ':
+                board[row][col] = 'O'
+                score = minimax(board, 0, False)
+                board[row][col] = ' '
+
+                if score > best_score:
+                    best_score = score
+                    best_move = (row, col)
+
+    row, col = best_move
+    board[row][col] = 'O'
+
+# Minimax algorithm for the impossible AI
+def minimax(board, depth, is_maximizing):
+    if check_win('O'):
+        return 1
+    if check_win('X'):
+        return -1
+    if check_tie():
+        return 0
+
+    if is_maximizing:
+        best_score = float('-inf')
+        for row in range(3):
+            for col in range(3):
+                if board[row][col] == ' ':
+                    board[row][col] = 'O'
+                    score = minimax(board, depth + 1, False)
+                    board[row][col] = ' '
+                    best_score = max(score, best_score)
+        return best_score
+    else:
+        best_score = float('inf')
+        for row in range(3):
+            for col in range(3):
+                if board[row][col] == ' ':
+                    board[row][col] = 'X'
+                    score = minimax(board, depth + 1, True)
+                    board[row][col] = ' '
+                    best_score = min(score, best_score)
+        return best_score
 
 # Checks if the game has ended in a tie
 def check_tie():
@@ -166,12 +214,47 @@ def play_hard_mode():
             print('The game ended in a tie.')
             break
 
+# Runs the game in impossible mode
+def play_impossible_mode():
+    print('Playing in impossible mode.')
+    print('Welcome to Tic Tac Toe!')
+    print_board()
+    while True:
+        # Player's move
+        try:
+            row = int(input('Enter row (1-3): '))
+            col = int(input('Enter column (1-3): '))
+        except ValueError:
+            print('Invalid input. Please enter a number between 1 and 3.')
+            continue
+        if row < 1 or row > 3 or col < 1 or col > 3:
+            print('Invalid input. Please enter a number between 1 and 3.')
+            continue
+        player_move(row, col, 'X')
+        print_board()
+        if check_win('X'):
+            print('Congratulations! You won!')
+            break
+        if check_tie():
+            print('The game ended in a tie.')
+            break
+        # AI's move
+        print('AI is making a move...')
+        impossible_ai_move()
+        print_board()
+        if check_win('O'):
+            print('Sorry, you lost. Better luck next time!')
+            break
+        if check_tie():
+            print('The game ended in a tie.')
+            break
+
 # Main function to choose game mode and start the game
 def main():
     print('Welcome to Tic Tac Toe!')
     while True:
         try:
-            mode = int(input('Choose a game mode:\n1. Easy\n2. Hard\nEnter the mode number (1-2): '))
+            mode = int(input('Choose a game mode:\n1. Easy\n2. Hard\n3. Impossible\nEnter the mode number (1-3): '))
         except ValueError:
             print('Invalid input. Please enter a number.')
             continue
@@ -181,8 +264,11 @@ def main():
         elif mode == 2:
             play_hard_mode()
             break
+        elif mode == 3:
+            play_impossible_mode()
+            break
         else:
-            print('Invalid input. Please enter 1 for Easy mode or 2 for Hard mode.')
+            print('Invalid input. Please enter 1 for Easy mode, 2 for Hard mode, or 3 for Impossible mode.')
 
 if __name__ == '__main__':
     main()
