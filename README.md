@@ -4,9 +4,8 @@ Tic tac toe in python
 
 - Colorful display: The game board is beautifully presented using different colors for player moves. Your moves are highlighted in red, while the AI's moves are displayed in blue. It adds a vibrant touch to the traditional Tic Tac Toe experience!
 
-- Easy and Hard modes: Choose between two difficulty levels. Easy mode provides a casual gaming experience, while Hard mode offers a more challenging AI opponent. Give them both a try and see which one suits your skills!
+- 1-5 level system: The ai starts off as easy and goes to impossible. if you lose any levels then the ai gets an advantage by being able to move first.
 
-- Intelligent AI: The AI opponent in Hard mode is designed to make strategic moves. It analyzes the board and tries to win the game whenever possible. It even blocks your winning moves, making it a tough competitor. Can you outsmart it?
 
 ## How to Play
 
